@@ -172,17 +172,19 @@ namespace WindowsFormsApp1
             // Create and initialize the dictionary
             Dictionary<string, string> dataDictionary = new Dictionary<string, string>
             {
-                { "heading1", "                                " },
-                { "heading2", "                  value    value" },
-                { "heading3", "Parameters ,Unit ,Real Time " },
+                { "heading1", "    Green Power              " },
+                { "heading2", "Parameters ,Unit ,Real Time  " },
                 { "SO2",      "SO2         ,PPM,   0.0      " },
                 { "NO+NO2",   "NO+NO2      ,PPM,   0.0      " },
                 { "CO",       "CO          ,PPM,   0.0      " },
-                { "CO2",      "CO2         ,PPM,   0.0      " },
                 { "O2",       "O2          ,  %,   0.0      " },
                 { "SPM",      "SPM      ,mg/ml3,   0.0      " },
                 { "Temp",     "Temp     ,  DegC,   0.0      " },
-                { "DateTime", "                            " }
+                { "Flow",     "Flow     , m3/hr,   0.0      " },
+                { "heading3", "Supplied By                  " },
+                { "heading4", "Enthalpy Asia Co Ltd         " }
+
+
             };
 
             return dataDictionary;
@@ -251,10 +253,11 @@ namespace WindowsFormsApp1
                     writeforSO2();
                     writeforNOX();
                     writeforCO();
-                    writeforCO2();
+                    //writeforCO2();
                     writeforO2();
                     writeforSPM();
                     writeforTemp();
+                    writeforFlow();
 
                     // Display cell values
                     StringBuilder sb = new StringBuilder();
@@ -300,7 +303,7 @@ namespace WindowsFormsApp1
                 string roundedValue2 = Math.Round(gasData.SO2, 2).ToString().PadLeft(10);
 
                 // Construct the updated value
-                string updatedValue = currentValue.Substring(0, position) + roundedValue1 + roundedValue2;
+                string updatedValue = currentValue.Substring(0, position) + roundedValue1;
 
                 // Update the dictionary with the new value
                 writeDictionary["SO2"] = updatedValue;
@@ -320,7 +323,7 @@ namespace WindowsFormsApp1
                 string roundedValue2 = Math.Round(gasData.SO2, 2).ToString().PadLeft(10);
 
                 // Construct the updated value
-                string updatedValue = currentValue.Substring(0, position) + roundedValue1 + roundedValue2;
+                string updatedValue = currentValue.Substring(0, position) + roundedValue1;
 
                 // Update the dictionary with the new value
                 writeDictionary["NO+NO2"] = updatedValue;
@@ -340,7 +343,7 @@ namespace WindowsFormsApp1
                 string roundedValue2 = Math.Round(gasData.CO, 2).ToString().PadLeft(10);
 
                 // Construct the updated value
-                string updatedValue = currentValue.Substring(0, position) + roundedValue1 + roundedValue2;
+                string updatedValue = currentValue.Substring(0, position) + roundedValue1;
 
                 // Update the dictionary with the new value
                 writeDictionary["CO"] = updatedValue;
@@ -360,7 +363,7 @@ namespace WindowsFormsApp1
                 string roundedValue2 = Math.Round(gasData.CO2, 2).ToString().PadLeft(10);
 
                 // Construct the updated value
-                string updatedValue = currentValue.Substring(0, position) + roundedValue1 + roundedValue2;
+                string updatedValue = currentValue.Substring(0, position) + roundedValue1;
 
                 // Update the dictionary with the new value
                 writeDictionary["CO2"] = updatedValue;
@@ -373,14 +376,14 @@ namespace WindowsFormsApp1
                 string currentValue = writeDictionary["O2"];
 
                 // Attempt to parse and round cellValues[7] and cellValues[8]
-                string roundedValue1 = double.TryParse(cellValues[6], out double numericValue1)
+                string roundedValue1 = double.TryParse(cellValues[5], out double numericValue1)
                     ? Math.Round(numericValue1, 2).ToString().PadLeft(6)
                     : "  0.0"; // Default value if parsing fails
                 gasData.O2 = Math.Max(numericValue1, gasData.O2);
                 string roundedValue2 = Math.Round(gasData.O2, 2).ToString().PadLeft(10);
 
                 // Construct the updated value
-                string updatedValue = currentValue.Substring(0, position) + roundedValue1 + roundedValue2;
+                string updatedValue = currentValue.Substring(0, position) + roundedValue1;
 
                 // Update the dictionary with the new value
                 writeDictionary["O2"] = updatedValue;
@@ -393,14 +396,14 @@ namespace WindowsFormsApp1
                 string currentValue = writeDictionary["SPM"];
 
                 // Attempt to parse and round cellValues[9] and cellValues[10]
-                string roundedValue1 = double.TryParse(cellValues[4], out double numericValue1)
+                string roundedValue1 = double.TryParse(cellValues[6], out double numericValue1)
                     ? Math.Round(numericValue1, 2).ToString().PadLeft(6)
                     : "  0.0"; // Default value if parsing fails
                 gasData.SPM = Math.Max(numericValue1, gasData.SPM);
                 string roundedValue2 = Math.Round(gasData.SPM, 2).ToString().PadLeft(10);
 
                 // Construct the updated value
-                string updatedValue = currentValue.Substring(0, position) + roundedValue1 + roundedValue2;
+                string updatedValue = currentValue.Substring(0, position) + roundedValue1;
 
                 // Update the dictionary with the new value
                 writeDictionary["SPM"] = updatedValue;
@@ -420,10 +423,28 @@ namespace WindowsFormsApp1
                 string roundedValue2 = Math.Round(gasData.Temp, 2).ToString().PadLeft(10);
 
                 // Construct the updated value
-                string updatedValue = currentValue.Substring(0, position) + roundedValue1 + roundedValue2;
+                string updatedValue = currentValue.Substring(0, position) + roundedValue1;
 
                 // Update the dictionary with the new value
                 writeDictionary["Temp"] = updatedValue;
+            }
+        }
+        private void writeforFlow()
+        {
+            if (writeDictionary.ContainsKey("Flow"))
+            {
+                string currentValue = writeDictionary["Flow"];
+
+                // Attempt to parse and round cellValues[8] (Flow value)
+                string roundedValue1 = double.TryParse(cellValues[8], out double numericValue1)
+                    ? Math.Round(numericValue1, 2).ToString().PadLeft(6)
+                    : "  0.0"; // Default value if parsing fails
+
+                // Construct the updated value (append rounded value at the correct position)
+                string updatedValue = currentValue.Substring(0, position) + roundedValue1;
+
+                // Update the dictionary with the new value
+                writeDictionary["Flow"] = updatedValue;
             }
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
