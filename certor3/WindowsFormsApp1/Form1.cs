@@ -181,6 +181,7 @@ namespace WindowsFormsApp1
                 { "SPM",      "SPM      ,mg/ml3,   0.0      " },
                 { "Temp",     "Temp     ,  DegC,   0.0      " },
                 { "Flow",     "Flow     , m3/hr,   0.0      " },
+                { "DateTime", "                             " },
                 { "heading3", "Supplied By                  " },
                 { "heading4", "Enthalpy Asia Co Ltd         " }
 
@@ -233,7 +234,8 @@ namespace WindowsFormsApp1
                     worksheet = workbook.Sheets[1]; // Get the first worksheet
 
                     // Get the last used row and column
-                    int lastRow = worksheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row;
+                    //int lastRow = worksheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row;
+                    int lastRow = worksheet.Cells[worksheet.Rows.Count, 1].End(Excel.XlDirection.xlUp).Row;
                     int lastColumn = worksheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Column;
 
                     // Array to store cell values
