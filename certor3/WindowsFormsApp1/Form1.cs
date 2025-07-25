@@ -235,8 +235,13 @@ namespace WindowsFormsApp1
 
                     // Get the last used row and column
                     //int lastRow = worksheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row;
-                    int lastRow = worksheet.Cells[worksheet.Rows.Count, 1].End(Excel.XlDirection.xlUp).Row;
-                    int lastColumn = worksheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Column;
+                    Excel.Range lastCell = worksheet.Cells[worksheet.Rows.Count, 1].End(Excel.XlDirection.xlUp);
+                    int lastRow = lastCell.Row;
+                    Marshal.ReleaseComObject(lastCell);
+                    Excel.Range lastCell1 = worksheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell);
+                    int lastColumn = lastCell1.Column;
+                    Marshal.ReleaseComObject(lastCell1);
+
 
                     // Array to store cell values
                     cellValues = new string[lastColumn];
@@ -379,7 +384,7 @@ namespace WindowsFormsApp1
 
                 // Attempt to parse and round cellValues[7] and cellValues[8]
                 string roundedValue1 = double.TryParse(cellValues[5], out double numericValue1)
-                    ? Math.Round(numericValue1, 2).ToString().PadLeft(6)
+                    ? Math.Round(numericValue1/100, 2).ToString().PadLeft(6)
                     : "  0.0"; // Default value if parsing fails
                 gasData.O2 = Math.Max(numericValue1, gasData.O2);
                 string roundedValue2 = Math.Round(gasData.O2, 2).ToString().PadLeft(10);
