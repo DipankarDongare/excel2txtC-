@@ -95,7 +95,7 @@ namespace WindowsFormsApp1
             // Initialize the timer
             timer = new Timer
             {
-                Interval = 10000 // Set interval to 10 seconds (10000 ms)
+                Interval = 60000 // Set interval to 60 seconds (60000 ms)
             };
             timer.Tick += Timer_Tick;
         }
@@ -165,6 +165,7 @@ namespace WindowsFormsApp1
             if (!string.IsNullOrEmpty(targetFilePath))
             {
                 WriteDictionaryToFile(targetFilePath);
+                ConvertCsvToExcel(targetFilePath); // Convert CSV to Excel after writing
             }
         }
         private Dictionary<string, string> InitializeDictionary()
@@ -457,8 +458,56 @@ namespace WindowsFormsApp1
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             ReadLastLineOfExcel();
+            if (!string.IsNullOrEmpty(targetFilePath))
+            {
+                WriteDictionaryToFile(targetFilePath);
+                ConvertCsvToExcel(targetFilePath); // Convert CSV to Excel after writing
+            }
         }
 
+        private void ConvertCsvToExcel(string csvFilePath)
+        {
+            // Generate Excel file path by replacing .csv with .xlsx
+            string excelFilePath = Path.ChangeExtension(csvFilePath, ".xlsx");
+
+            Excel.Application excelApp = new Excel.Application();
+            Excel.Workbook workbook = null;
+            Excel.Worksheet worksheet = null;
+
+            try
+            {
+                workbook = excelApp.Workbooks.Add();
+                worksheet = workbook.Sheets[1];
+
+                string[] lines = File.ReadAllLines(csvFilePath);
+                for (int row = 0; row < lines.Length; row++)
+                {
+                    string[] values = lines[row].Split(',');
+                    for (int col = 0; col < values.Length; col++)
+                    {
+                        worksheet.Cells[row + 1, col + 1].Value = values[col];
+                    }
+                }
+
+                workbook.SaveAs(excelFilePath, Excel.XlFileFormat.xlOpenXMLWorkbook);
+                MessageBox.Show($"CSV converted to Excel: {excelFilePath}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error converting CSV to Excel: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                if (worksheet != null) Marshal.ReleaseComObject(worksheet);
+                if (workbook != null)
+                {
+                    workbook.Close(false);
+                    Marshal.ReleaseComObject(workbook);
+                }
+                excelApp.Quit();
+                Marshal.ReleaseComObject(excelApp);
+            }
+        }
 
     }
 }
